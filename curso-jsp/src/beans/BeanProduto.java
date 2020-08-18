@@ -6,9 +6,11 @@ public class BeanProduto {
 	
 	private String nome;
 	
-	private String quantidade;
+	private double valorProduto;
 	
-	private String valor;
+	private double quantidadeProduto;
+	
+	private Long categoria_id;
 
 	public Long getId() {
 		return id;
@@ -26,22 +28,35 @@ public class BeanProduto {
 		this.nome = nome;
 	}
 
-	public String getQuantidade() {
-		return quantidade;
+	public double getValorProduto() {
+		return valorProduto;
 	}
 
-	public void setQuantidade(String quantidade) {
-		this.quantidade = quantidade;
+	public void setValorProduto(double valorProduto) {
+		this.valorProduto = valorProduto;
+	}
+	
+	public String getValorEmTexto() {
+		return Double.toString(valorProduto).replace('.', ',');
+	}
+	
+
+	public double getQuantidadeProduto() {
+		return quantidadeProduto;
 	}
 
-	public String getValor() {
-		return valor;
+	public void setQuantidadeProduto(double quantidadeProduto) {
+		this.quantidadeProduto = quantidadeProduto;
 	}
 
-	public void setValor(String valor) {
-		this.valor = valor;
+	public Long getCategoria_id() {
+		return categoria_id;
+	}
+
+	public void setCategoria_id(Long categoria_id) {
+		this.categoria_id = categoria_id;
 	}
 	
 	
-
+	
 }

@@ -3,34 +3,78 @@ package beans;
 public class BeanCursoJsp {
 
 	private Long id;
-
 	private String login;
-
 	private String senha;
-
 	private String nome;
-
 	private String telefone;
-
 	private String cep;
-
 	private String rua;
-
 	private String bairro;
-
 	private String cidade;
-
 	private String estado;
-
 	private String ibge;
-
 	private String fotoBase64;
+	private String fotoBase64Miniatura;
 	private String curriculoBase64;
-
 	private String contentType;
 	private String contentTypeCurriculo;
-
 	private String tempFotoUser;
+	private boolean ativo;
+	private String sexo;
+	private String perfil;
+	
+	private boolean atualizarImagem = true;
+	private boolean atualizarPdf = true;
+	
+
+		
+	public String getPerfil() {
+		return perfil;
+	}
+
+	public void setPerfil(String perfil) {
+		this.perfil = perfil;
+	}
+
+	public String getSexo() {
+		return sexo;
+	}
+
+	public void setSexo(String sexo) {
+		this.sexo = sexo;
+	}
+
+	public boolean isAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(boolean ativo) {
+		this.ativo = ativo;
+	}
+
+	public boolean isAtualizarImagem() {
+		return atualizarImagem;
+	}
+
+	public void setAtualizarImagem(boolean atualizarImagem) {
+		this.atualizarImagem = atualizarImagem;
+	}
+
+	public boolean isAtualizarPdf() {
+		return atualizarPdf;
+	}
+
+	public void setAtualizarPdf(boolean atualizarPdf) {
+		this.atualizarPdf = atualizarPdf;
+	}
+
+	public void setFotoBase64Miniatura(String fotoBase64Miniatura) {
+		this.fotoBase64Miniatura = fotoBase64Miniatura;
+	}
+
+	public String getFotoBase64Miniatura() {
+		return fotoBase64Miniatura;
+	}
 
 	public String getTempFotoUser() {
 
@@ -39,24 +83,40 @@ public class BeanCursoJsp {
 		return tempFotoUser;
 	}
 
-	public String getCurriculoBase64() {
-		return curriculoBase64;
+	public void setContentTypeCurriculo(String contentTypeCurriculo) {
+		this.contentTypeCurriculo = contentTypeCurriculo;
 	}
 
 	public void setCurriculoBase64(String curriculoBase64) {
 		this.curriculoBase64 = curriculoBase64;
 	}
 
+	public String getCurriculoBase64() {
+		return curriculoBase64;
+	}
+
 	public String getContentTypeCurriculo() {
 		return contentTypeCurriculo;
 	}
 
-	public void setContentTypeCurriculo(String contentTypeCurriculo) {
-		this.contentTypeCurriculo = contentTypeCurriculo;
+	public void setFotoBase64(String fotoBase64) {
+		this.fotoBase64 = fotoBase64;
+	}
+
+	public String getFotoBase64() {
+		return fotoBase64;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
+	public String getContentType() {
+		return contentType;
 	}
 
 	public Long getId() {
-		return id;
+		return this.id;
 	}
 
 	public void setId(Long id) {
@@ -64,7 +124,7 @@ public class BeanCursoJsp {
 	}
 
 	public String getLogin() {
-		return login;
+		return this.login;
 	}
 
 	public void setLogin(String login) {
@@ -72,7 +132,7 @@ public class BeanCursoJsp {
 	}
 
 	public String getSenha() {
-		return senha;
+		return this.senha;
 	}
 
 	public void setSenha(String senha) {
@@ -80,7 +140,7 @@ public class BeanCursoJsp {
 	}
 
 	public String getNome() {
-		return nome;
+		return this.nome;
 	}
 
 	public void setNome(String nome) {
@@ -142,21 +202,4 @@ public class BeanCursoJsp {
 	public void setIbge(String ibge) {
 		this.ibge = ibge;
 	}
-
-	public String getFotoBase64() {
-		return fotoBase64;
-	}
-
-	public void setFotoBase64(String fotoBase64) {
-		this.fotoBase64 = fotoBase64;
-	}
-
-	public String getContentType() {
-		return contentType;
-	}
-
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
-
 }

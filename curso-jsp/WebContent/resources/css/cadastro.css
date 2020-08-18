@@ -44,19 +44,21 @@ body {
 	-ms-transition: all 0.30s ease-in-out;
 	-o-transition: all 0.30s ease-in-out;
 	outline: none;
+	border-radius: 5px;
 }
 
 .form-style-1 input[type=text]:focus, .form-style-1 input[type=date]:focus,
 	.form-style-1 input[type=datetime]:focus, .form-style-1 input[type=number]:focus,
 	.form-style-1 input[type=search]:focus, .form-style-1 input[type=time]:focus,
-	.form-style-1 input[type=url]:focus, .form-style-1 input[type=password],
+	.form-style-1 input[type=url]:focus, .form-style-1 input[type=password]:focus,
 	.form-style-1 input[type=email]:focus, .form-style-1 textarea:focus,
 	.form-style-1 select:focus {
 	-moz-box-shadow: 0 0 8px #88D5E9;
 	-webkit-box-shadow: 0 0 8px #88D5E9;
 	box-shadow: 0 0 8px #88D5E9;
 	border: 1px solid #88D5E9;
-}
+	background-color: #F5FFFA;
+	}
 
 .form-style-1 .field-divided {
 	width: 49%;
@@ -79,6 +81,7 @@ body {
 	padding: 8px 15px 8px 15px;
 	border: none;
 	color: #fff;
+	border-radius: 5px;
 }
 
 .form-style-1 input[type=submit]:hover, .form-style-1 input[type=button]:hover
@@ -87,6 +90,7 @@ body {
 	box-shadow: none;
 	-moz-box-shadow: none;
 	-webkit-box-shadow: none;
+	border-radius: 5px;
 }
 
 .form-style-1 .required {

@@ -1,5 +1,7 @@
 package servlet;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -7,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -15,6 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
+import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
@@ -46,29 +50,27 @@ public class Usuario extends HttpServlet {
 			String acao = request.getParameter("acao");
 			String user = request.getParameter("user");
 
-			if (acao.equalsIgnoreCase("delete") && user != null) {
+			if (acao != null && acao.equalsIgnoreCase("delete") && user != null) {
 				daoUsuario.delete(user);
 				RequestDispatcher view = request.getRequestDispatcher("/cadastroUsuario.jsp");
 				request.setAttribute("usuarios", daoUsuario.listar());
 				view.forward(request, response);
 
-			} else if (acao.equalsIgnoreCase("editar")) {
-
+			} else if (acao != null && acao.equalsIgnoreCase("editar")) {
 				BeanCursoJsp beanCursoJsp = daoUsuario.consultar(user);
-
 				RequestDispatcher view = request.getRequestDispatcher("/cadastroUsuario.jsp");
 				request.setAttribute("user", beanCursoJsp);
 				view.forward(request, response);
 
-			} else if (acao.equalsIgnoreCase("listartodos")) {
-				RequestDispatcher view = request.getRequestDispatcher("/cadastroUsuario.jsp"); // indicando para qual
-																								// tela vai redirecionar
+			} else if (acao != null && acao.equalsIgnoreCase("listartodos")) {
+				RequestDispatcher view = request
+						.getRequestDispatcher("/cadastroUsuario.jsp"); /* indicando para qual tela vai redirecionar */
 				request.setAttribute("usuarios", daoUsuario.listar());
 				view.forward(request, response);
-			} else if (acao.equalsIgnoreCase("download")) {
+
+			} else if (acao != null && acao.equalsIgnoreCase("download")) {
 				BeanCursoJsp usuario = daoUsuario.consultar(user);
 				if (usuario != null) {
-
 					String contentType = "";
 					byte[] fileBytes = null;
 
@@ -85,12 +87,10 @@ public class Usuario extends HttpServlet {
 					response.setHeader("Content-Disposition",
 							"attachment;filename=arquivo." + contentType.split("\\/")[1]);
 
-					/*
-					 * Recebendo os bytes convertidos acima em um objeto de entrada para processar
-					 */
+					/* Coloca os bytes em um objeto de entrada para processar */
 					InputStream is = new ByteArrayInputStream(fileBytes);
 
-					/* Iniciando resposta para o navegador */
+					/* inicio da resposta para o navegador */
 					int read = 0;
 					byte[] bytes = new byte[1024];
 					OutputStream os = response.getOutputStream();
@@ -103,13 +103,14 @@ public class Usuario extends HttpServlet {
 					os.close();
 
 				}
-
+			} else {
+				RequestDispatcher view = request.getRequestDispatcher("/cadastroUsuario.jsp");
+				request.setAttribute("usuarios", daoUsuario.listar());
+				view.forward(request, response);
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -140,6 +141,8 @@ public class Usuario extends HttpServlet {
 			String cidade = request.getParameter("cidade");
 			String estado = request.getParameter("estado");
 			String ibge = request.getParameter("ibge");
+			String sexo = request.getParameter("sexo");
+			String perfil = request.getParameter("perfil");
 
 			BeanCursoJsp usuario = new BeanCursoJsp();
 			usuario.setId((id != null && !id.isEmpty()) ? Long.parseLong(id) : null);
@@ -153,34 +156,70 @@ public class Usuario extends HttpServlet {
 			usuario.setCidade(cidade);
 			usuario.setEstado(estado);
 			usuario.setIbge(ibge);
+			usuario.setSexo(sexo); // pegando o dado que veio por parametro da tela
+			usuario.setPerfil(perfil);
+
+			if (request.getParameter("ativo") != null && request.getParameter("ativo").equalsIgnoreCase("on")) {
+				usuario.setAtivo(true);
+			} else {
+				usuario.setAtivo(false);
+			}
 
 			try {
 
-				/* INICIO de File upload de imagens e pdf */
+				/* Inicio File upload de imagems e pdf */
+
 				if (ServletFileUpload.isMultipartContent(request)) {
-					
+
 					Part imagemFoto = request.getPart("foto");
-					
+
 					if (imagemFoto != null && imagemFoto.getInputStream().available() > 0) {
+
 						String fotoBase64 = new Base64()
-								.encodeBase64String(converteStreamParabyte(imagemFoto.getInputStream()));
+								.encodeBase64String(converteStremParabyte(imagemFoto.getInputStream()));
 
 						usuario.setFotoBase64(fotoBase64);
 						usuario.setContentType(imagemFoto.getContentType());
-					}else {
-						usuario.setFotoBase64(request.getParameter("fotoTemp"));
-						usuario.setContentType(request.getParameter("contentTypeTemp"));
-						
+
+						/* Inicio miniatura imagem */
+
+						/* Transforma emum bufferedImage */
+						byte[] imageByteDecode = new Base64().decodeBase64(fotoBase64);
+						BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imageByteDecode));
+
+						/* Pega o tipo da imagem */
+						int type = bufferedImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : bufferedImage.getType();
+
+						/* Cria imagem em miniatura */
+						BufferedImage resizedImage = new BufferedImage(100, 100, type);
+						Graphics2D g = resizedImage.createGraphics();
+						g.drawImage(bufferedImage, 0, 0, 100, 100, null);
+						g.dispose();
+
+						/* Escrever imagem novamente */
+						ByteArrayOutputStream baos = new ByteArrayOutputStream();
+						ImageIO.write(resizedImage, "png", baos);
+
+						String miniaturaBase64 = "data:image/png;base64,"
+								+ DatatypeConverter.printBase64Binary(baos.toByteArray());
+
+						usuario.setFotoBase64Miniatura(miniaturaBase64);
+						/* Fim miniatura imagem */
+
+					} else {
+						usuario.setAtualizarImagem(false);
 					}
-					
+
 					/* processa pdf */
 					Part curriculoPdf = request.getPart("curriculo");
 					if (curriculoPdf != null && curriculoPdf.getInputStream().available() > 0) {
 						String curriculoBase64 = new Base64()
-								.encodeBase64String(converteStreamParabyte(curriculoPdf.getInputStream()));
+								.encodeBase64String(converteStremParabyte(curriculoPdf.getInputStream()));
 						usuario.setCurriculoBase64(curriculoBase64);
 						usuario.setContentTypeCurriculo(curriculoPdf.getContentType());
 
+					} else {
+						usuario.setAtualizarPdf(false);
 					}
 
 				}
@@ -237,7 +276,7 @@ public class Usuario extends HttpServlet {
 				RequestDispatcher view = request.getRequestDispatcher(
 						"/cadastroUsuario.jsp"); /* falando para permanecer na mesma página após o cadastro */
 				request.setAttribute("usuarios", daoUsuario.listar());
-				request.setAttribute("msgC", "Salvo com sucesso");
+				// request.setAttribute("msgC", "Salvo com sucesso");
 				view.forward(request, response); // fazendo redirecionamento da página
 
 			} catch (Exception e) {
@@ -248,14 +287,17 @@ public class Usuario extends HttpServlet {
 	}
 
 	/* Converte a entrada de fluxo de dados da imagem para byte */
-	private byte[] converteStreamParabyte(InputStream imagem) throws Exception {
+	private byte[] converteStremParabyte(InputStream imagem) throws Exception {
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		int reads = imagem.read();
 		while (reads != -1) {
 			baos.write(reads);
 			reads = imagem.read();
 		}
+
 		return baos.toByteArray();
+
 	}
 
 }

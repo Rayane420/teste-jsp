@@ -7,8 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sun.net.httpserver.Authenticator.Result;
-
+import beans.BeanCategoria;
 import beans.BeanProduto;
 import connection.SingleConnection;
 
@@ -22,13 +21,13 @@ public class DaoProduto {
 
 	public void Salvar(BeanProduto produto) {
 		try {
-			String sql = "insert into produto(nome, quantidade, valor) values (?, ?, ?)";
-			PreparedStatement insertP = connection.prepareStatement(sql);
-			insertP.setString(1, produto.getNome());
-			insertP.setString(2, produto.getQuantidade());
-			insertP.setString(3, produto.getValor());
-			insertP.execute();
-
+			String sql = "insert into produto(nome, valorproduto, quantidadeproduto, categoria_id) values (?, ?, ?, ?)";
+			PreparedStatement insert = connection.prepareStatement(sql);
+			insert.setString(1, produto.getNome());
+			insert.setDouble(2, produto.getValorProduto());
+			insert.setDouble(3, produto.getQuantidadeProduto());
+			insert.setLong(4, produto.getCategoria_id());
+			insert.execute();
 			connection.commit();
 
 		} catch (Exception e) {
@@ -53,13 +52,31 @@ public class DaoProduto {
 			BeanProduto beanProduto = new BeanProduto();
 			beanProduto.setId(resultSet.getLong("id"));
 			beanProduto.setNome(resultSet.getString("nome"));
-			beanProduto.setQuantidade(resultSet.getString("quantidade"));
-			beanProduto.setValor(resultSet.getString("valor"));
-
+			beanProduto.setQuantidadeProduto(resultSet.getInt("quantidadeproduto"));
+			beanProduto.setValorProduto(resultSet.getDouble("valorproduto"));
+			beanProduto.setCategoria_id(resultSet.getLong("categoria_id"));
+			
 			listar.add(beanProduto);
 		}
 
 		return listar;
+	}
+	
+	public List<BeanCategoria> listaCategorias() throws Exception{
+		List<BeanCategoria> retorno = new ArrayList<BeanCategoria>();
+		
+		String sql = "select * from categoria";
+		PreparedStatement statement = connection.prepareStatement(sql);
+		
+		ResultSet resultSet = statement.executeQuery();
+		
+		while (resultSet.next()) {
+			BeanCategoria categoria = new BeanCategoria();
+			categoria.setId(resultSet.getLong("id"));
+			categoria.setNome(resultSet.getString("nome"));
+			retorno.add(categoria);
+		}
+		return retorno;
 	}
 
 	public void delete(String id) {
@@ -91,8 +108,9 @@ public class DaoProduto {
 			BeanProduto beanProduto = new BeanProduto();
 			beanProduto.setId(resultSet.getLong("id"));
 			beanProduto.setNome(resultSet.getString("nome"));
-			beanProduto.setQuantidade(resultSet.getString("quantidade"));
-			beanProduto.setValor(resultSet.getString("valor"));
+			beanProduto.setQuantidadeProduto(resultSet.getInt("quantidadeproduto"));
+			beanProduto.setValorProduto(resultSet.getDouble("valorproduto"));
+			beanProduto.setCategoria_id(resultSet.getLong("categoria_id"));
 
 			return beanProduto;
 		}
@@ -102,12 +120,14 @@ public class DaoProduto {
 	
 	public void atualizar (BeanProduto produto) {
 		try {
-			String sql = "update produto set nome = ?, quantidade = ?, valor = ? where id =" + produto.getId();
+			String sql = "update produto set nome = ?, valorproduto = ?, quantidadeproduto = ?, categoria_id = ? where id =" + produto.getId();
 			
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setString(1, produto.getNome());
-			preparedStatement.setString(2, produto.getQuantidade());
-			preparedStatement.setString(3, produto.getValor());
+			preparedStatement.setDouble(2, produto.getValorProduto());
+			preparedStatement.setDouble(3, produto.getQuantidadeProduto());
+			preparedStatement.setLong(4, produto.getCategoria_id());
+			
 			preparedStatement.executeUpdate();
 			
 			connection.commit();

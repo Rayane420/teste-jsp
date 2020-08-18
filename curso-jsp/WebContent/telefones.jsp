@@ -12,7 +12,7 @@
 <body>
 	<a href="acessoliberado.jsp"><img src="resources/img/home2.png"
 		alt="Home" title="Voltar para o Inicio" width="40px" height="40px"></a>
-	<a href="index.jsp"><img src="resources/img/sair.png" alt="Home"
+	<a href="index.jsp"><img src="resources/img/Sair.png" alt="Home"
 		title="Sair do sistema" width="40px" height="40px"></a>
 
 
@@ -43,14 +43,19 @@
 										<option>Residencial</option>
 										<option>Celular</option>
 										<option>Recado</option>
-								</select></td>
+								</select>
+								</td>
 							</tr>
 
 
 							<tr>
 								<td></td>
-								<td><input type="submit" value="Salvar"></td>
-
+								<td>
+								<input type="submit" value="Salvar" style="width: 173px;"> 
+								</td>
+								<td>
+								<input type="submit" id="voltar" value="voltar" style="width: 173px;" onclick="document.getElementById('formUser').action = 'salvarTelefone?acao=voltar'">
+								</td>
 							</tr>
 
 						</table>
@@ -76,7 +81,7 @@
 			<p />
 			<p />
 			<caption>
-				<h1>Telefones Cadastrados</h1>
+				<h1>Lista de Telefones do usuário</h1>
 				<h2 style="color: #00FF00">${msgT}</h2>
 			</caption>
 			<c:forEach items="${telefones}" var="fone">
@@ -88,9 +93,10 @@
 						<td><c:out value="${fone.tipo}"></c:out></td>
 
 						<td style="width: 100px"><a
-							href="salvarTelefone?acao=deleteFone&foneId=${fone.id}"><img
+							href="salvarTelefone?user=${fone.usuario}&acao=deleteFone&foneId=${fone.id}" onclick="return confirm('Deseja confirmar a exclusão?')"><img
 								src="resources/img/lixeira.png" alt="Excluir"
-								title="Excluir Cadastro" width="20px" height="20px"><></a></td>
+								title="Excluir Cadastro" width="20px" height="20px"><></a>
+						</td>
 					</tr>
 				</tbody>
 			</c:forEach>
@@ -102,7 +108,6 @@
 					return false;
 				} else if (document.getElementById("tipo").value == '') {
 					alert('Informe o tipo!');
-					return false;
 				}
 				return true;
 			}
